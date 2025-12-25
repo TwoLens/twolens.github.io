@@ -23,13 +23,32 @@
 <nav class="nav">
   <div class="logo">TwoLens</div>
   <ul class="nav-links">
-        <li><a href="/index.html">Home</a></li>
+        <li><a href="/new.html">Home</a></li>
         <li><a href="about.html">About</a></li>
         <li><a href="works.html" class="active">Portfolio</a></li>
         <li><a href="services.html">Services</a></li>
         <li><a href="contact.html">Contact</a></li>
   </ul>
 </nav>
+
+<nav class="nav">
+    <div class="logo">YOURLOGO</div>
+
+    <ul class="nav-links" id="navLinks">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#portfolio">Portfolio</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+
+    <!-- Hamburger -->
+    <div class="menu-btn" id="menuBtn">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+</nav>
+
 
 <!-- Hero Section -->
 <header class="hero" style="background-image:url('images/gallery-hero.jpg');">
@@ -116,6 +135,15 @@
 <!-- Lightbox JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
 
+<script>
+const menuBtn = document.getElementById("menuBtn");
+const navLinks = document.getElementById("navLinks");
+
+menuBtn.addEventListener("click", () => {
+    menuBtn.classList.toggle("active");
+    navLinks.classList.toggle("active");
+});
+</script>
+
 </body>
 </html>
-
