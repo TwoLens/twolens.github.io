@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portraits | TwoLens Photography</title>
+    <link rel="icon" type="image/png" href="../profiles/logo.png">
+    
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        :root {
+            --bg-dark: #020202;
+            --accent: #f4b400;
+            --glass-blur: blur(25px) saturate(180%);
+            --ios-spring: cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- LIQUID BACKGROUND --- */
+        .liquid-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: #000;
+        }
+        .blob {
+            position: absolute;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(244, 180, 0, 0.08) 0%, transparent 60%);
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: move 20s infinite alternate ease-in-out;
+        }
+        @keyframes move {
+            from { transform: translate(-20%, -20%); }
+            to { transform: translate(30%, 30%); }
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            position: fixed;
+            width: 90%;
+            top: 25px;
+            left: 5%;
+            z-index: 1000;
+            background: rgba(15, 15, 15, 0.5);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+        }
+        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; }
+        .logo span { color: var(--accent); }
+        .nav-links { display: flex; list-style: none; gap: 2rem; }
+        .nav-links a { color: rgba(255, 255, 255, 0.6); text-decoration: none; font-size: 0.9rem; transition: 0.5s var(--ios-spring); }
+        .nav-links a:hover { color: var(--accent); }
+
+        /* --- HEADER --- */
+        .gallery-header {
+            padding: 180px 5% 60px;
+            text-align: center;
+        }
+        .gallery-header h1 { font-size: clamp(2.5rem, 7vw, 4.5rem); font-weight: 800; letter-spacing: -2px; }
+        .gallery-header p { color: var(--accent); text-transform: uppercase; letter-spacing: 5px; font-size: 0.75rem; margin-bottom: 10px; }
+
+        /* --- CLEAN GALLERY --- */
+        .portfolio-container {
+            max-width: 1300px;
+            margin: 0 auto 100px;
+            padding: 0 20px;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 60px;
+        }
+
+        .photo-item {
+            position: relative;
+            transition: all 0.6s var(--ios-spring);
+        }
+
+        .img-wrapper {
+            width: 100%;
+            aspect-ratio: 1/1;
+            overflow: hidden;
+            border-radius: 24px;
+            transition: all 0.6s var(--ios-spring);
+        }
+
+        .img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 1.2s var(--ios-spring);
+        }
+
+        .photo-item:hover .img-wrapper {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 
+                        0 0 35px rgba(244, 180, 0, 0.25);
+        }
+        
+        .photo-meta {
+            padding: 20px 10px;
+        }
+
+        .photo-meta h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+        .photo-meta p { 
+            font-size: 0.8rem; 
+            color: #f4b400 !important; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            font-weight: 700; 
+            margin-top: 4px;
+            opacity: 0.75;
+        }
+
+        .photo-item:hover img {
+            transform: scale(1.08);
+        }
+
+        footer { text-align: center; padding: 80px; opacity: 0.2; font-size: 0.7rem; letter-spacing: 2px; }
+
+        /* --- NAVBAR FIX --- */
+        .menu-toggle { display: none; cursor: pointer; }
+        @media (max-width: 768px) {
+            nav { width: 92%; left: 4%; }
+            .menu-toggle { display: block; }
+            .nav-links { 
+                display: none; 
+                flex-direction: column;
+                position: absolute;
+                top: 85px;
+                left: 0;
+                width: 100%;
+                background: rgba(15, 15, 15, 0.95);
+                backdrop-filter: blur(15px);
+                padding: 30px;
+                border-radius: 25px;
+                gap: 20px;
+                border: 1px solid rgba(255,255,255,0.1);
+                text-align: center;
+            }
+            .nav-links.active { display: flex; }
+        }
+
+        .review-cta {
+            text-align: center;
+            padding: 40px 0;
+            margin-bottom: 20px;
+        }
+
+        .btn-review {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 32px;
+            background: rgba(244, 180, 0, 0.05);
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: 1px solid rgba(244, 180, 0, 0.3);
+            border-radius: 50px;
+            transition: all 0.5s var(--ios-spring);
+            backdrop-filter: var(--glass-blur);
+        }
+
+        .btn-review:hover {
+            background: var(--accent);
+            color: #000;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(244, 180, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="liquid-container">
+        <div class="blob"></div>
+    </div>
+
+    <nav>
+        <div class="logo">Two<span>Lens</span></div>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="../../../index.html">Home</a></li>
+            <li><a href="../../../about.html">About</a></li>
+            <li><a href="works.html">Portfolio</a></li>
+            <li><a href="../services.html">Services</a></li>
+            <li><a href="../contact.html">Contact</a></li>
+            <li><a href="../review.html">Reviews</a></li>
+        </ul>
+        <div class="menu-toggle" onclick="toggleMenu()"><i data-lucide="menu"></i></div>
+    </nav>
+
+    <header class="gallery-header">
+        <p data-aos="fade-down">Photography Series</p>
+        <h1 data-aos="fade-up">Birthday Shoots</h1>
+    </header>
+
+    <section class="portfolio-container">
+        <div class="portfolio-grid">
+            
+            <div class="photo-item" data-aos="fade-up">
+                <div class="img-wrapper">
+                    <img src="https://res.cloudinary.com/dtetdrnjy/image/upload/v1776445903/1_qkyrar.jpg" alt="Kasundi">
+                </div>
+                <div class="photo-meta">
+                    <h3>Golden Narrative</h3>
+                    <p>Outdoor Session</p>
+                </div>
+            </div>
+
+            <div class="photo-item" data-aos="fade-up" data-aos-delay="100">
+                <div class="img-wrapper">
+                    <img src="https://res.cloudinary.com/dtetdrnjy/image/upload/v1776445909/2_ceiy08.jpg" alt="Portrait">
+                </div>
+                <div class="photo-meta">
+                    <h3>Golden Narrative</h3>
+                    <p>Outdoor Session</p>
+                </div>
+            </div>
+
+            <div class="photo-item" data-aos="fade-up" data-aos-delay="100">
+                <div class="img-wrapper">
+                    <img src="https://res.cloudinary.com/dtetdrnjy/image/upload/v1776445917/10_tjaux9.jpg" alt="Portrait">
+                </div>
+                <div class="photo-meta">
+                    <h3>Golden Narrative</h3>
+                    <p>Outdoor Session</p>
+                </div>
+            </div>
+
+            <div class="photo-item" data-aos="fade-up" data-aos-delay="100">
+                <div class="img-wrapper">
+                    <img src="https://res.cloudinary.com/dtetdrnjy/image/upload/v1776445927/4_ofsgip.jpg" alt="Portrait">
+                </div>
+                <div class="photo-meta">
+                    <h3>Golden Narrative</h3>
+                    <p>Outdoor Session</p>
+                </div>
+            </div>
+
+            <div class="photo-item" data-aos="fade-up" data-aos-delay="100">
+                <div class="img-wrapper">
+                    <img src="https://res.cloudinary.com/dtetdrnjy/image/upload/v1776446686/5_bdpzlq.jpg" alt="Portrait">
+                </div>
+                <div class="photo-meta">
+                    <h3>Golden Narrative</h3>
+                    <p>Outdoor Session</p>
+                </div>
+            </div>
+
+            <div class="photo-item" data-aos="fade-up" data-aos-delay="100">
+                <div class="img-wrapper">
+                    <img src="https://res.cloudinary.com/dtetdrnjy/image/upload/v1776446688/3_c0w12e.jpg" alt="Portrait">
+                </div>
+                <div class="photo-meta">
+                    <h3>Golden Narrative</h3>
+                    <p>Outdoor Session</p>
+                </div>
+            </div>
+
+            <div class="photo-item" data-aos="fade-up" data-aos-delay="100">
+                <div class="img-wrapper">
+                    <img src="https://res.cloudinary.com/dtetdrnjy/image/upload/v1776446689/7_ppfgvh.jpg" alt="Portrait">
+                </div>
+                <div class="photo-meta">
+                    <h3>Golden Narrative</h3>
+                    <p>Outdoor Session</p>
+                </div>
+            </div>
+
+            <div class="photo-item" data-aos="fade-up" data-aos-delay="100">
+                <div class="img-wrapper">
+                    <img src="https://res.cloudinary.com/dtetdrnjy/image/upload/v1776445929/8_v83gig.jpg" alt="Portrait">
+                </div>
+                <div class="photo-meta">
+                    <h3>Golden Narrative</h3>
+                    <p>Outdoor Session</p>
+                </div>
+            </div>
+
+            <div class="photo-item" data-aos="fade-up" data-aos-delay="100">
+                <div class="img-wrapper">
+                    <img src="https://res.cloudinary.com/dtetdrnjy/image/upload/v1776446687/9_pag6r1.jpg" alt="Portrait">
+                </div>
+                <div class="photo-meta">
+                    <h3>Golden Narrative</h3>
+                    <p>Outdoor Session</p>
+                </div>
+            </div>
+
+            <div class="photo-item" data-aos="fade-up" data-aos-delay="100">
+                <div class="img-wrapper">
+                    <img src="https://res.cloudinary.com/dtetdrnjy/image/upload/v1776446687/11_nlopgk.jpg" alt="Portrait">
+                </div>
+                <div class="photo-meta">
+                    <h3>Golden Narrative</h3>
+                    <p>Outdoor Session</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    
+    <section class="review-cta" data-aos="fade-up">
+        <a href="../../../review.html" class="btn-review">
+            <i data-lucide="edit"></i>
+            Leave a Review
+        </a>
+    </section>
+
+    <footer>
+        &copy; 2026 TWOLENS PHOTOGRAPHY • SRILANKA
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        lucide.createIcons();
+        AOS.init({ duration: 1200, once: true });
+
+        function toggleMenu() {
+            const nav = document.getElementById('nav-links');
+            nav.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
