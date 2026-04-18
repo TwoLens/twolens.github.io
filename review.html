@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TwoLens | Experience Review</title>
+    <style>
+        :root {
+            --brand-gold: #FFB800;
+            --ios-dark: #000000;
+            --glass-bg: rgba(20, 20, 20, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --ios-spring: cubic-bezier(0.4, 0, 0.2, 1.4);
+            --sf-pro: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+        body {
+            background: var(--ios-dark);
+            color: #fff;
+            font-family: var(--sf-pro);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- LIQUID GLASS BACKGROUND --- */
+        .liquid-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: linear-gradient(45deg, #000, #1a1a1a, #0a0a0a, #000);
+            background-size: 400% 400%;
+            animation: liquidFlow 15s ease infinite;
+        }
+
+        @keyframes liquidFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1rem 5%; position: fixed; width: 92%; top: 30px; left: 4%;
+            z-index: 1000; background: rgba(10, 10, 10, 0.4); backdrop-filter: blur(30px) saturate(200%);
+            border: 1px solid var(--glass-border); border-radius: 35px;
+        }
+
+        .logo { font-size: 1.6rem; font-weight: 900; letter-spacing: -1px; }
+        .logo span { color: var(--brand-gold); }
+
+        .nav-links { display: flex; list-style: none; gap: 2rem; }
+        .nav-links a { 
+            color: rgba(255, 255, 255, 0.6); 
+            text-decoration: none; 
+            font-size: 0.9rem; 
+            font-weight: 500; 
+            transition: all 0.4s var(--ios-spring); 
+        }
+        .nav-links a:hover { color: var(--brand-gold); transform: scale(1.05); }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+        .menu-toggle span {
+            width: 25px;
+            height: 2px;
+            background: #fff;
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+
+        /* --- LOGIN OVERLAY --- */
+        #login-screen {
+            position: fixed; inset: 0; z-index: 2000;
+            background: #000; display: flex; align-items: center; justify-content: center;
+            transition: transform 0.8s var(--ios-spring), opacity 0.5s ease;
+        }
+
+        .login-card {
+            width: 90%; max-width: 400px; padding: 45px; text-align: center;
+            background: var(--glass-bg); backdrop-filter: blur(50px) saturate(180%);
+            border: 1px solid var(--glass-border); border-radius: 44px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+            animation: cardEntrance 0.8s var(--ios-spring);
+        }
+
+        @keyframes cardEntrance {
+            from { opacity: 0; transform: scale(0.9) translateY(40px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .login-card h2 { font-size: 2.4rem; margin-bottom: 8px; font-weight: 800; letter-spacing: -1.5px; }
+        .login-card span { color: var(--brand-gold); }
+        .login-card p { color: rgba(255,255,255,0.4); margin-bottom: 35px; font-size: 0.95rem; }
+
+        input {
+            width: 100%; padding: 20px; border-radius: 20px; border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.06); color: #fff; margin-bottom: 15px; outline: none;
+            font-size: 1rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        input:focus { border-color: var(--brand-gold); background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+
+        .primary-btn {
+            width: 100%; padding: 20px; border-radius: 20px; border: none;
+            background: #fff; color: #000; font-weight: 700; cursor: pointer;
+            font-size: 1.1rem; margin-top: 15px; transition: all 0.3s var(--ios-spring);
+        }
+
+        /* --- MAIN UI --- */
+        .main-content { opacity: 0; pointer-events: none; transition: 1.2s cubic-bezier(0.2, 0.8, 0.2, 1); padding-top: 140px; }
+        .main-content.active { opacity: 1; pointer-events: auto; }
+
+        /* --- MODAL DESIGN --- */
+        .modal {
+            max-width: 1100px; width: 95%; height: 620px;
+            background: rgba(30, 30, 32, 0.4); backdrop-filter: blur(60px) saturate(180%);
+            border: 1px solid var(--glass-border); border-radius: 54px;
+            display: flex; margin: 0 auto 100px; overflow: hidden;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.5);
+        }
+
+        .visual-pane {
+            flex: 1; padding: 60px; display: flex; flex-direction: column; justify-content: flex-end;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent), url('https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=1000') center/cover;
+            position: relative;
+        }
+
+        #welcomeUser { font-size: 3.2rem; font-weight: 800; letter-spacing: -2px; line-height: 1; }
+        #welcomeUser span { color: var(--brand-gold); text-shadow: 0 0 30px rgba(255, 184, 0, 0.3); }
+
+        .content-pane { flex: 1.3; padding: 70px; position: relative; background: rgba(255,255,255,0.01); }
+
+        .rating { display: flex; flex-direction: row-reverse; justify-content: flex-start; gap: 12px; margin-bottom: 30px; }
+        .rating input { display: none; }
+        .rating label { font-size: 38px; color: #333; cursor: pointer; transition: 0.3s var(--ios-spring); }
+        .rating input:checked ~ label, .rating label:hover ~ label, .rating label:hover { color: var(--brand-gold); transform: scale(1.2); }
+
+        textarea {
+            width: 100%; height: 140px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
+            border-radius: 24px; padding: 25px; color: #fff; margin-bottom: 30px; resize: none; outline: none; font-family: inherit;
+            font-size: 1rem; transition: 0.3s;
+        }
+
+        /* --- SLIDER --- */
+        .slider-track {
+            position: relative; width: 100%; height: 74px; background: rgba(255,255,255,0.06);
+            border-radius: 37px; display: flex; align-items: center; padding: 6px; border: 1px solid var(--glass-border);
+            overflow: hidden; touch-action: none;
+        }
+        .slider-text { width: 100%; text-align: center; color: rgba(255,255,255,0.3); font-weight: 700; font-size: 1rem; }
+        .slider-thumb {
+            position: absolute; left: 6px; width: 62px; height: 62px; background: #fff;
+            border-radius: 31px; display: flex; align-items: center; justify-content: center;
+            cursor: grab; z-index: 2; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .thumb-tick { width: 24px; height: 13px; border-left: 4px solid #000; border-bottom: 4px solid #000; transform: rotate(-45deg) translateY(-2px); }
+
+        /* --- SUCCESS BUTTON & TICK --- */
+        .done-btn {
+            background: rgba(255, 255, 255, 0.1); color: #fff; border: 1px solid var(--glass-border);
+            padding: 15px 40px; border-radius: 18px; font-weight: 600; cursor: pointer;
+            margin-top: 30px; backdrop-filter: blur(10px); transition: 0.3s var(--ios-spring);
+        }
+        .done-btn:hover { background: var(--brand-gold); color: #000; transform: translateY(-3px); }
+
+        /* --- REVIEWS GRID --- */
+        .reviews-feed { max-width: 1100px; margin: 0 auto 120px; padding: 0 20px; }
+        .client-wall-tag { margin-bottom: 40px; opacity: 0.5; text-transform: uppercase; letter-spacing: 4px; font-size: 0.75rem; font-weight: 900; }
+        .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 30px; }
+        
+        .review-card {
+            padding: 35px; border-radius: 40px; background: rgba(255,255,255,0.04);
+            border: 1px solid var(--glass-border); backdrop-filter: blur(20px);
+            animation: cardPop 0.7s var(--ios-spring) forwards;
+        }
+
+        @keyframes cardPop { from { opacity: 0; transform: scale(0.9) translateY(40px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+        /* --- MOBILE ADAPTATION (REDESIGNED) --- */
+        @media (max-width: 768px) {
+            nav { top: 15px; padding: 0.8rem 1.5rem; border-radius: 25px; }
+            .logo { font-size: 1.4rem; }
+            
+            .menu-toggle { display: flex; }
+            
+            .nav-links {
+                position: fixed;
+                top: 80px;
+                right: 4%;
+                width: 220px;
+                background: rgba(20, 20, 20, 0.95);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--glass-border);
+                border-radius: 24px;
+                flex-direction: column;
+                gap: 0;
+                padding: 15px;
+                transform: translateY(-20px) scale(0.95);
+                opacity: 0;
+                pointer-events: none;
+                transition: 0.4s var(--ios-spring);
+                z-index: 1000;
+            }
+
+            .nav-links.show {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            .nav-links li { width: 100%; }
+            .nav-links a {
+                display: block;
+                padding: 12px 15px;
+                font-size: 0.85rem;
+                font-weight: 700;
+                color: #fff;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            /* Active page color as seen in your screenshot */
+            .nav-links a[href="review.html"] { color: var(--brand-gold); }
+
+            .main-content { padding-top: 100px; }
+            .modal { flex-direction: column; height: auto; border-radius: 40px; width: 94%; }
+            .visual-pane { height: 220px; padding: 35px; }
+            #welcomeUser { font-size: 2.2rem; }
+            .content-pane { padding: 40px 25px; }
+            .rating label { font-size: 30px; }
+            textarea { height: 120px; padding: 18px; }
+            .reviews-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="liquid-bg"></div>
+
+    <div id="login-screen">
+        <div class="login-card">
+            <h2>Two<span>Lens</span></h2>
+            <p>Join the conversation</p>
+            <input type="text" id="usernameInput" placeholder="Name">
+            <input type="email" id="emailInput" placeholder="Email Address">
+            <button class="primary-btn" onclick="handleLogin()">Continue</button>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainUI">
+        <nav>
+            <div class="logo">Two<span>Lens</span></div>
+            <div class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="Works/works.html">Works</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="review.html">Reviews</a></li>
+            </ul>
+        </nav>
+
+        <main class="modal">
+            <div class="visual-pane">
+                <h1 id="welcomeUser">Welcome.</h1>
+            </div>
+
+            <div class="content-pane">
+                <div id="form-ui">
+                    <h2 style="margin-bottom: 25px; font-weight: 800; font-size: 1.8rem;">Leave a Review</h2>
+                    <div class="rating">
+                        <input type="radio" id="s5" name="r" value="5"><label for="s5">★</label>
+                        <input type="radio" id="s4" name="r" value="4"><label for="s4">★</label>
+                        <input type="radio" id="s3" name="r" value="3"><label for="s3">★</label>
+                        <input type="radio" id="s2" name="r" value="2"><label for="s2">★</label>
+                        <input type="radio" id="s1" name="r" value="1"><label for="s1">★</label>
+                    </div>
+                    <textarea id="reviewText" placeholder="How was your photoshoot experience?"></textarea>
+                    
+                    <div class="slider-track" id="track">
+                        <div class="slider-text">Slide to post review</div>
+                        <div class="slider-thumb" id="thumb">
+                            <div class="thumb-tick"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="success" style="display:none; height: 100%; flex-direction: column; align-items: center; justify-content: center; text-align: center; animation: cardPop 0.6s var(--ios-spring);">
+                    <div style="width: 90px; height: 90px; border: 4px solid var(--brand-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 25px;">
+                        <div class="thumb-tick" style="border-left-color: var(--brand-gold); border-bottom-color: var(--brand-gold); width: 35px; height: 18px;"></div>
+                    </div>
+                    <h2 style="font-size: 2.2rem; font-weight: 800;">Posted!</h2>
+                    <p style="color: rgba(255,255,255,0.4); margin-top: 10px;">Your review is now live on the wall.</p>
+                    <button class="done-btn" onclick="location.reload()">Done</button>
+                </div>
+            </div>
+        </main>
+
+        <section class="reviews-feed">
+            <p class="client-wall-tag">Client Wall</p>
+            <div class="reviews-grid" id="reviewsGrid"></div>
+        </section>
+    </div>
+
+    <script>
+        // Menu Toggle Logic
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        menuToggle.onclick = () => {
+            navLinks.classList.toggle('show');
+            // Animate hamburger to X if you want, but strictly kept simple per original design
+        };
+
+        // Close menu when clicking a link
+        navLinks.onclick = () => {
+            navLinks.classList.remove('show');
+        };
+
+        let userData = { name: "", email: "" };
+        const thumb = document.getElementById('thumb');
+        const track = document.getElementById('track');
+
+        function handleLogin() {
+            const name = document.getElementById('usernameInput').value;
+            const email = document.getElementById('emailInput').value;
+            if (!name || !email) return alert("Please fill in both fields");
+            userData.name = name;
+            userData.email = email;
+            document.getElementById('welcomeUser').innerHTML = `Welcome,<br><span>${name}.</span>`;
+            document.getElementById('login-screen').style.opacity = "0";
+            document.getElementById('login-screen').style.transform = "scale(1.1) translateY(-20px)";
+            setTimeout(() => {
+                document.getElementById('login-screen').style.display = "none";
+                document.getElementById('mainUI').classList.add('active');
+            }, 500);
+        }
+
+        let isDragging = false;
+        let startX = 0;
+
+        const onStart = (x) => { isDragging = true; startX = x; thumb.style.transition = "none"; };
+        const onMove = (curX) => {
+            if (!isDragging) return;
+            let x = curX - startX;
+            let max = track.offsetWidth - thumb.offsetWidth - 12;
+            if (x < 0) x = 0;
+            if (x > max) x = max;
+            thumb.style.transform = `translateX(${x}px)`;
+            if (x >= max) { isDragging = false; publishReview(); }
+        };
+        const onEnd = () => {
+            if (!isDragging) return;
+            isDragging = false;
+            thumb.style.transition = "0.5s var(--ios-spring)";
+            thumb.style.transform = "translateX(0)";
+        };
+
+        thumb.onmousedown = (e) => onStart(e.pageX);
+        thumb.ontouchstart = (e) => onStart(e.touches[0].pageX);
+        window.onmousemove = (e) => onMove(e.pageX);
+        window.ontouchmove = (e) => onMove(e.touches[0].pageX);
+        window.onmouseup = window.ontouchend = onEnd;
+
+        function publishReview() {
+            const text = document.getElementById('reviewText').value || "Incredible experience!";
+            const stars = document.querySelector('input[name="r"]:checked')?.value || 5;
+            const grid = document.getElementById('reviewsGrid');
+            const card = document.createElement('div');
+            card.className = 'review-card';
+            card.innerHTML = `
+                <div style="display:flex; align-items:center; gap:15px; margin-bottom:15px;">
+                    <div style="width:45px; height:45px; background:var(--brand-gold); border-radius:14px; display:flex; align-items:center; justify-content:center; color:#000; font-weight:800;">
+                        ${userData.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                        <h4 style="font-size:1.1rem;">${userData.name}</h4>
+                        <div style="color:var(--brand-gold);">${'★'.repeat(stars)}</div>
+                    </div>
+                </div>
+                <p style="color:rgba(255,255,255,0.8); line-height:1.6;">${text}</p>
+            `;
+            grid.prepend(card);
+            
+            document.getElementById('form-ui').style.opacity = "0";
+            setTimeout(() => {
+                document.getElementById('form-ui').style.display = "none";
+                document.getElementById('success').style.display = "flex";
+            }, 400);
+        }
+    </script>
+</body>
+</html>
