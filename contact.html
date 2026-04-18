@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Contact Us | TwoLens Photography</title>
+    
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="profiles/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        :root {
+            --bg-dark: #000000;
+            --accent: #f4b400; 
+            --glass-white: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --apple-blur: blur(40px) saturate(200%);
+            --ios-curve: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- PROFESSIONAL MESH GRADIENT --- */
+        .liquid-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #111, #000);
+        }
+
+        .blob {
+            position: absolute;
+            width: 800px; height: 800px;
+            background: radial-gradient(circle, rgba(244, 180, 0, 0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(100px);
+            animation: move 25s infinite alternate ease-in-out;
+        }
+
+        @keyframes move {
+            0% { transform: translate(-30%, -30%) rotate(0deg); }
+            100% { transform: translate(30%, 20%) rotate(90deg); }
+        }
+
+        /* --- MINIMALIST NAV --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 6%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.5px; }
+        .logo span { color: var(--accent); }
+
+        .nav-links { display: flex; list-style: none; gap: 2.5rem; }
+        .nav-links a { 
+            color: rgba(255, 255, 255, 0.5); 
+            text-decoration: none; 
+            font-size: 0.85rem; 
+            font-weight: 500; 
+            letter-spacing: 0.2px;
+            transition: 0.4s var(--ios-curve); 
+        }
+
+        .nav-links a:hover { color: var(--accent); }
+
+        /* --- CONTACT WRAPPER --- */
+        .main-wrapper {
+            padding: 160px 20px 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        /* LEFT SIDE: INFO */
+        .info-side { position: sticky; top: 160px; }
+        .info-side h2 { font-size: 3.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1.5px; }
+        .info-side p { font-size: 1.1rem; color: rgba(255,255,255,0.5); margin-bottom: 40px; max-width: 400px; }
+
+        .social-grid { display: grid; gap: 15px; }
+        .info-pill {
+            background: var(--glass-white);
+            border: 1px solid var(--glass-border);
+            padding: 18px 25px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: white;
+            font-weight: 500;
+            transition: all 0.5s var(--ios-curve);
+        }
+
+        .info-pill:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateX(10px);
+        }
+
+        .info-pill i { color: var(--accent); font-size: 1.2rem; }
+
+        /* RIGHT SIDE: CONTACT CARD */
+        .contact-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: var(--apple-blur);
+            -webkit-backdrop-filter: var(--apple-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 40px;
+            padding: 50px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+        }
+
+        .input-group { margin-bottom: 20px; position: relative; }
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid transparent;
+            border-radius: 18px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s var(--ios-curve);
+        }
+
+        .input-group input:focus, .input-group textarea:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 22px;
+            border: none;
+            border-radius: 20px;
+            background: #ffffff;
+            color: #000;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.5s var(--ios-curve);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .submit-btn:hover {
+            background: var(--accent);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(244, 180, 0, 0.2);
+        }
+
+        /* --- THE SYNC OPATE FOOTER --- */
+        footer { 
+            padding: 100px 0 60px; 
+            text-align: center; 
+            border-top: 1px solid rgba(255,255,255,0.05); 
+            margin-top: 50px;
+        }
+        .footer-logo { 
+            font-family: 'Syncopate', sans-serif; 
+            font-size: 4rem; 
+            opacity: 0.05; 
+            margin-bottom: 20px; 
+            letter-spacing: 10px;
+        }
+        .footer-tagline {
+            color: rgba(255,255,255,0.3); 
+            font-size: 0.7rem; 
+            letter-spacing: 10px; 
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        /* --- MOBILE REFINEMENTS --- */
+        .menu-toggle { display: none; cursor: pointer; z-index: 1002; }
+
+        @media (max-width: 992px) {
+            .menu-toggle { 
+                display: flex; 
+                background: rgba(255,255,255,0.08); 
+                padding: 8px; 
+                border-radius: 12px;
+            }
+
+            .nav-links {
+                display: flex;
+                position: absolute;
+                top: 70px;
+                right: 15px;
+                width: 220px;
+                flex-direction: column;
+                background: rgba(28, 28, 30, 0.94);
+                backdrop-filter: var(--apple-blur);
+                border: 0.5px solid rgba(255,255,255,0.15);
+                border-radius: 22px;
+                padding: 8px;
+                gap: 0;
+                transform: scale(0.6) translateY(-30px);
+                transform-origin: top right;
+                opacity: 0;
+                pointer-events: none;
+                transition: all 0.4s var(--ios-curve);
+            }
+
+            .nav-links.active { transform: scale(1) translateY(0); opacity: 1; pointer-events: auto; }
+            .nav-links a { display: block; padding: 15px 20px; opacity: 1; text-align: left; }
+
+            .main-wrapper { grid-template-columns: 1fr; padding-top: 120px; gap: 40px; }
+            .info-side { position: static; text-align: center; }
+            .info-side h2 { font-size: 2.8rem; }
+            .contact-card { padding: 30px; }
+
+            /* New Footer Mobile Scaling */
+            .footer-logo { font-size: 2.2rem; }
+            .footer-tagline { letter-spacing: 5px; font-size: 0.6rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="liquid-container">
+        <div class="blob"></div>
+        <div class="blob" style="right: 0; bottom: 0; background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%); animation-delay: -10s;"></div>
+    </div>
+
+    <nav>
+        <div class="logo">Two<span>Lens</span></div>
+        <div class="menu-toggle" id="mobile-menu-btn">
+            <i data-lucide="menu" id="menu-icon" style="color:white; width: 22px;"></i>
+        </div>
+        <ul class="nav-links" id="nav-list">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="Works/works.html">Works</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="review.html">Reviews</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-wrapper">
+        <div class="info-side" data-aos="fade-right">
+            <h2>Let’s work<br>together.</h2>
+            <p>From intimate portraits to grand events, we’re here to capture your story with professional precision.</p>
+            
+            <div class="social-grid">
+                <a href="https://instagram.com/twolens_photography.co" target="_blank" class="info-pill">
+                    <i class="fab fa-instagram"></i>
+                    <span>@twolens_photography.co</span>
+                </a>
+                <a href="tel:+94705555812" class="info-pill">
+                    <i class="fas fa-phone"></i>
+                    <span>+94 (70) 555 5812</span>
+                </a>
+                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=TwoLensPhotographyy@gmail.com" target="_blank" class="info-pill">
+                    <i class="fas fa-envelope"></i>
+                    <span>TwoLensPhotographyy@gmail.com</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="contact-card" data-aos="fade-left">
+            <form id="contactForm">
+                <div class="input-group">
+                    <input type="text" placeholder="Full Name" required>
+                </div>
+                <div class="input-group">
+                    <input type="email" placeholder="Email Address" required>
+                </div>
+                <div class="input-group">
+                    <textarea placeholder="Tell us about your event/session..." required rows="5"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <span>Send Message</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-logo">TWOLENS</div>
+        <div class="footer-tagline">EST. 2026 • SRI LANKA</div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script>
+        lucide.createIcons();
+        AOS.init({ duration: 1000, once: true });
+
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const navLinks = document.getElementById('nav-list');
+        const menuIcon = document.getElementById('menu-icon');
+
+        menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navLinks.classList.toggle('active');
+            const isOpen = navLinks.classList.contains('active');
+            menuIcon.setAttribute('data-lucide', isOpen ? 'x' : 'menu');
+            lucide.createIcons();
+        });
+
+        document.addEventListener('click', () => {
+            navLinks.classList.remove('active');
+            menuIcon.setAttribute('data-lucide', 'menu');
+            lucide.createIcons();
+        });
+
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('.submit-btn');
+            const originalText = btn.innerHTML;
+            
+            btn.style.pointerEvents = "none";
+            btn.innerHTML = "<span>Processing...</span>";
+            
+            setTimeout(() => {
+                alert('✨ Message sent successfully! We will contact you shortly.');
+                btn.innerHTML = originalText;
+                btn.style.pointerEvents = "all";
+                this.reset();
+            }, 1500);
+        });
+    </script>
+</body>
+</html>
