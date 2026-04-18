@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>About | TwoLens Studio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" type="image/png" href="profiles/logo.png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --bg: #050505;
+            --accent: #f4b400;
+            --text-dim: rgba(255,255,255,0.5);
+            --ios-spring: cubic-bezier(0.32, 0.72, 0, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: var(--bg);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- LOADER STYLES --- */
+        #loader-wrapper {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+
+        #loader-wrapper.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .rolling-overlay {
+            display: flex;
+            font-family: 'Syncopate', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .slot {
+            height: 4.2rem;
+            overflow: hidden;
+            opacity: 1;
+        }
+
+        .slot-column {
+            display: flex;
+            flex-direction: column;
+            transform: translateY(0);
+        }
+
+        .animate-scroll {
+            transform: translateY(-63.1rem); 
+            transition: transform 1.5s cubic-bezier(0.1, 0, 0.1, 1);
+        }
+
+        .slot-char {
+            height: 4.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 3.8rem;
+        }
+
+        /* --- NAV STYLES --- */
+        nav {
+            position: fixed; top: 0; width: 100%; height: 100px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 5%; z-index: 1000;
+            background: linear-gradient(to bottom, var(--bg) 20%, transparent);
+        }
+        .logo-nav { font-family: 'Syncopate', sans-serif; font-size: 1rem; letter-spacing: 5px; color: var(--accent); text-decoration: none; }
+        .nav-links { display: flex; gap: 40px; list-style: none; }
+        .nav-links a { color: #fff; text-decoration: none; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; opacity: 0.4; transition: 0.4s; }
+        .nav-links a:hover, .nav-links a.active { opacity: 1; color: var(--accent); }
+
+        .hero {
+            height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+        }
+
+        .hero-bg-text {
+            position: absolute; font-weight: 900; font-size: 25vw;
+            color: rgba(255,255,255,0.02); z-index: 1;
+            text-align: center;
+        }
+
+        .logo-container {
+            position: relative; width: 350px; height: 350px;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 100;
+        }
+
+        .logo-circle-border {
+            position: absolute; width: 100%; height: 100%;
+            border: 1px solid rgba(244, 180, 0, 0.2);
+            border-radius: 50%;
+            animation: rotate 15s linear infinite;
+        }
+
+        .rounded-logo-img {
+            width: 82%; height: 82%; object-fit: cover;
+            border-radius: 50%; border: 8px solid var(--bg);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+        }
+
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .section { padding: 100px 8%; position: relative; }
+        .flex-row { display: flex; align-items: center; gap: 100px; margin-bottom: 180px; }
+        .flex-row.reverse { flex-direction: row-reverse; }
+        .image-box { flex: 1.2; position: relative; border-radius: 20px; overflow: hidden; }
+        .image-box img { width: 100%; height: 700px; object-fit: cover; filter: grayscale(100%) contrast(1.1); transition: 0.6s; }
+        .image-box:hover img { filter: grayscale(0%); transform: scale(1.05); }
+        .text-box { flex: 0.8; }
+        .text-box span { color: var(--accent); font-weight: 800; font-size: 0.75rem; letter-spacing: 5px; text-transform: uppercase; }
+        .text-box h2 { font-family: 'Syncopate', sans-serif; font-size: 2.5rem; margin-bottom: 30px; line-height: 1.2; }
+        .text-box h3 { font-family: 'Syncopate', sans-serif; font-size: 1.8rem; margin-bottom: 20px; }
+        .text-box p { font-size: 1.2rem; color: var(--text-dim); line-height: 1.8; font-weight: 300; }
+
+        footer { padding: 120px 0 60px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); }
+        .footer-logo { font-family: 'Syncopate', sans-serif; font-size: 4rem; opacity: 0.05; margin-bottom: 20px; }
+
+        /* --- MOBILE REFINEMENTS --- */
+        .menu-toggle { display: none; cursor: pointer; z-index: 1002; }
+
+        @media (max-width: 1024px) {
+            /* 1. Small Rolling Text for Mobile */
+            .rolling-overlay { font-size: 2.2rem; }
+            .slot { height: 2.6rem; }
+            .slot-char { height: 2.6rem; min-width: 2.4rem; }
+            .animate-scroll { transform: translateY(-39.1rem); } /* Adjusted for smaller height */
+
+            nav {
+                height: 70px;
+                padding: 0 20px;
+                background: rgba(5, 5, 5, 0.8);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+            }
+
+            .menu-toggle { 
+                display: flex; 
+                background: rgba(255,255,255,0.08); 
+                padding: 8px; 
+                border-radius: 12px;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            .nav-links {
+                display: flex;
+                position: absolute;
+                top: 75px;
+                right: 15px;
+                width: 220px;
+                flex-direction: column;
+                background: rgba(28, 28, 30, 0.94);
+                backdrop-filter: blur(30px) saturate(180%);
+                -webkit-backdrop-filter: blur(30px) saturate(180%);
+                border: 0.5px solid rgba(255,255,255,0.15);
+                border-radius: 22px;
+                padding: 8px;
+                gap: 0;
+                box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+                transform: scale(0.6) translateY(-30px);
+                transform-origin: top right;
+                opacity: 0;
+                pointer-events: none;
+                transition: all 0.4s var(--ios-spring);
+            }
+
+            .nav-links.active { transform: scale(1) translateY(0); opacity: 1; pointer-events: auto; }
+            .nav-links a { display: block; padding: 15px 20px; opacity: 1; text-align: left; -webkit-tap-highlight-color: transparent; }
+            
+            /* 2. Smaller Footer Logo for Mobile */
+            .footer-logo { font-size: 2.2rem; margin-bottom: 10px; }
+
+            .flex-row, .flex-row.reverse { flex-direction: column; text-align: center; gap: 40px; margin-bottom: 80px; }
+            .image-box img { height: 350px; }
+            .text-box h2 { font-size: 1.6rem; }
+            .logo-container { width: 250px; height: 250px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader-wrapper">
+        <div class="rolling-overlay" id="rolling-text"></div>
+    </div>
+
+    <nav>
+        <a href="index.html" class="logo-nav">TWOLENS</a>
+        <div class="menu-toggle" id="mobile-menu-btn">
+            <i data-lucide="menu" id="menu-icon" style="color:white; width: 22px;"></i>
+        </div>
+        <ul class="nav-links" id="nav-list">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html" class="active">About</a></li>
+            <li><a href="Works/works.html">Works</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="review.html">Reviews</a></li>
+        </ul>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-bg-text">AB0UT</div>
+        <div class="logo-container">
+            <div class="logo-circle-border"></div>
+            <img src="https://res.cloudinary.com/dtetdrnjy/image/upload/v1776446766/logo_t7agwm.avif" alt="TwoLens Studio" class="rounded-logo-img">
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="flex-row">
+            <div class="image-box" data-aos="fade-right">
+                <img src="https://res.cloudinary.com/dtetdrnjy/image/upload/v1776446768/visual_m9ntrt.jpg" alt="Aesthetic Shot">
+            </div>
+            <div class="text-box" data-aos="fade-left">
+                <span>THE PHILOSOPHY</span>
+                <h2>CHASING <br><span style="color:var(--accent)">PERFECTION.</span></h2>
+                <p>We don't follow trends. We set the <b>standard.</b> TwoLens was born from the obsession of capturing what others miss—the split-second emotions that define a lifetime.</p>
+            </div>
+        </div>
+
+        <div class="flex-row reverse">
+            <div class="image-box" data-aos="fade-left">
+                <img src="https://res.cloudinary.com/dtetdrnjy/image/upload/v1776446766/1_qptxsv.jpg" alt="Dunura Vidun">
+            </div>
+            <div class="text-box" data-aos="fade-right">
+                <span>FOUNDER</span>
+                <h3>DUNURA VIDUN</h3>
+                <p>A developer by day and a visual storyteller by night. Dunura brings a <b>technical precision</b> to photography that ensures every pixel is exactly where it needs to be.</p>
+            </div>
+        </div>
+
+        <div class="flex-row">
+            <div class="image-box" data-aos="fade-right">
+                <img src="https://res.cloudinary.com/dtetdrnjy/image/upload/v1776446767/2_abxjhy.webp" alt="Nidusha Chanuja">
+            </div>
+            <div class="text-box" data-aos="fade-left">
+                <span>CO-FOUNDER</span>
+                <h3>NIDUSHA CHANUJA</h3>
+                <p>The creative pulse of TwoLens. Nidusha focuses on the <b>narrative flow</b>, turning a series of photos into a cinematic experience that tells your unique story.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-logo">TWOLENS</div>
+        <p style="color:var(--text-dim); font-size: 0.7rem; letter-spacing: 10px; font-weight: 700;">
+            EST. 2026 • SRI LANKA
+        </p>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script>
+        lucide.createIcons();
+        AOS.init({ duration: 1200, once: true, easing: 'ease-out-quart' });
+
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const navLinks = document.getElementById('nav-list');
+        const menuIcon = document.getElementById('menu-icon');
+
+        menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navLinks.classList.toggle('active');
+            const isOpen = navLinks.classList.contains('active');
+            menuIcon.setAttribute('data-lucide', isOpen ? 'x' : 'menu');
+            lucide.createIcons();
+        });
+
+        document.addEventListener('click', () => {
+            navLinks.classList.remove('active');
+            menuIcon.setAttribute('data-lucide', 'menu');
+            lucide.createIcons();
+        });
+
+        // Loader Script adjusted for smaller mobile sizing
+        const targetWord = "TWOLENS";
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const container = document.getElementById('rolling-text');
+
+        targetWord.split('').forEach((char, index) => {
+            const slot = document.createElement('div');
+            slot.className = 'slot';
+            const column = document.createElement('div');
+            column.className = 'slot-column';
+            column.style.transitionDelay = `${index * 0.1}s`;
+
+            for (let i = 0; i < 15; i++) {
+                const charDiv = document.createElement('div');
+                charDiv.className = 'slot-char';
+                charDiv.textContent = alphabet[Math.floor(Math.random() * 10)];
+                column.appendChild(charDiv);
+            }
+
+            const finalCharDiv = document.createElement('div');
+            finalCharDiv.className = 'slot-char';
+            finalCharDiv.textContent = char;
+            column.appendChild(finalCharDiv);
+            slot.appendChild(column);
+            container.appendChild(slot);
+        });
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.querySelectorAll('.slot-column').forEach(col => {
+                    col.classList.add('animate-scroll');
+                });
+            }, 100);
+
+            setTimeout(() => {
+                document.getElementById('loader-wrapper').classList.add('fade-out');
+            }, 2500);
+        });
+    </script>
+</body>
+</html>
