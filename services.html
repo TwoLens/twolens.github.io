@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Services | TwoLens Photography</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="profiles/logo.png">
+
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --accent: #ffc107; 
+            --glass-bg: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --glass-blur: blur(35px);
+            --ios-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+            --ios-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --ios-spring: cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            background-image: radial-gradient(circle at 20% 20%, #1a1a1a 0%, transparent 40%),
+                              radial-gradient(circle at 80% 80%, #111 0%, transparent 40%);
+        }
+
+        .bg-glow {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% -20%, rgba(255, 193, 7, 0.12) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 8%;
+            position: fixed;
+            width: 90%;
+            top: 20px;
+            left: 5%;
+            z-index: 1000;
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: var(--ios-shadow);
+        }
+
+        .logo { font-size: 1.4rem; font-weight: 700; }
+        .logo span { color: var(--accent); }
+
+        .nav-links { display: flex; list-style: none; gap: 2rem; }
+        .nav-links a { color: rgba(255, 255, 255, 0.7); text-decoration: none; font-size: 0.85rem; transition: 0.3s; }
+        .nav-links a:hover { color: #fff; }
+
+        /* --- MOBILE NAV (Floating Island) --- */
+        .menu-btn { display: none; cursor: pointer; padding: 5px; }
+
+        .nav-island {
+            position: fixed;
+            top: 90px;
+            right: 5%;
+            width: 220px;
+            background: rgba(20, 20, 22, 0.95);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 10px;
+            list-style: none;
+            transform: scale(0.9) translateY(-20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s var(--ios-spring);
+            z-index: 1001;
+            box-shadow: var(--ios-shadow);
+        }
+
+        .nav-island.active { transform: scale(1) translateY(0); opacity: 1; pointer-events: auto; }
+
+        .nav-island a {
+            display: block;
+            padding: 14px 20px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 14px;
+            transition: 0.3s;
+        }
+        .nav-island a:hover { background: rgba(255,255,255,0.05); color: var(--accent); }
+
+        /* --- HERO --- */
+        .hero { padding: 220px 10% 60px; text-align: center; }
+        .hero h1 { font-size: clamp(2.5rem, 6vw, 4rem); letter-spacing: -2px; margin-bottom: 15px; font-weight: 700; }
+        .hero p { color: rgba(255,255,255,0.5); opacity: 0; transform: translateY(20px); transition: 1s ease; }
+        .hero p.visible { opacity: 1; transform: translateY(0); }
+
+        /* --- SERVICES CARDS --- */
+        .services-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+            padding: 0 10% 100px;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            padding: 50px 40px;
+            border-radius: 38px;
+            transition: all 0.6s var(--ios-ease);
+            box-shadow: var(--ios-shadow);
+        }
+
+        .card:hover { transform: scale(1.03); background: rgba(255, 255, 255, 0.1); }
+
+        .icon-box {
+            width: 60px; height: 60px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 18px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 30px; color: var(--accent);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* --- BUTTONS --- */
+        .btn-ios {
+            display: inline-block;
+            padding: 14px 32px;
+            background: #ffffff;
+            color: #000;
+            border: none;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: transform 0.3s var(--ios-ease), background 0.3s;
+        }
+        .btn-ios:active { transform: scale(0.92); }
+        .btn-ios.secondary { background: rgba(255,255,255,0.1); color: #fff; padding: 8px 16px; font-size: 0.75rem; border-radius: 12px; }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 2000;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-content {
+            background: #1c1c1e;
+            border: 1px solid var(--glass-border);
+            width: 90%; max-width: 400px;
+            padding: 30px;
+            border-radius: 40px;
+            transform: scale(0.8) translateY(100px);
+            transition: transform 0.6s var(--ios-ease);
+        }
+        .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
+
+        /* --- PACKAGE LIST --- */
+        .package-list { list-style: none; margin-top: 20px; }
+        
+        .package-item {
+            background: rgba(255,255,255,0.03);
+            margin-bottom: 16px; 
+            padding: 22px;       
+            border-radius: 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            opacity: 0;
+            transform: translateX(30px);
+            transition: 0.6s var(--ios-ease);
+        }
+
+        .modal-overlay.active .package-item { opacity: 1; transform: translateX(0); }
+
+        .package-info h4 { 
+            font-size: 1.1rem; 
+            margin-bottom: 6px; 
+        }
+        
+        .package-info span { color: var(--accent); font-weight: 600; font-size: 0.9rem; }
+
+        /* --- DETAIL POPUP --- */
+        .detail-popup {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            background: #2c2c2e;
+            border-radius: 30px 30px 0 0;
+            padding: 40px 30px;
+            transform: translateY(100%);
+            transition: transform 0.5s cubic-bezier(0.32, 1, 0.23, 1);
+            z-index: 2100;
+        }
+        .detail-popup.active { transform: translateY(0); }
+
+        /* --- MOBILE VIEW OVERRIDES --- */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .menu-btn { display: flex; align-items: center; }
+            nav { width: 92%; left: 4%; }
+
+            /* Scaled down font sizes */
+            .logo { font-size: 1.2rem; }
+            .hero h1 { font-size: 2.2rem; }
+            .hero p { font-size: 0.85rem; }
+            
+            #modalTitle { font-size: 1.25rem !important; }
+            .package-item { padding: 18px; margin-bottom: 12px; }
+            .package-info h4 { font-size: 0.95rem; margin-bottom: 4px; }
+            .package-info span { font-size: 0.8rem; }
+            .btn-ios.secondary { padding: 6px 12px; font-size: 0.7rem; border-radius: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+
+    <nav>
+        <div class="logo">Two<span>Lens</span></div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="Works/works.html">Works</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="review.html">Reviews</a></li>
+        </ul>
+        <div class="menu-btn" onclick="toggleMenu()">
+            <i data-lucide="layout-grid" style="color: #fff;"></i>
+        </div>
+    </nav>
+
+    <ul class="nav-island" id="navIsland">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="Works/works.html">Works</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="review.html">Reviews</a></li>
+    </ul>
+
+    <header class="hero">
+        <h1 id="type-h1"></h1>
+        <p id="roll-p">Professional photography at competitive Sri Lankan rates.</p>
+    </header>
+
+    <section class="services-container">
+        <div class="card" data-aos="fade-up">
+            <div class="icon-box"><i data-lucide="camera"></i></div>
+            <h3>Event Shoots</h3>
+            <p>Memorable coverage for birthdays and intimate gatherings.</p><br>
+            <button class="btn-ios" onclick="openModal('events')">View Packages</button>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-delay="100">
+            <div class="icon-box"><i data-lucide="user"></i></div>
+            <h3>Portraits</h3>
+            <p>Premium outdoor sessions focusing on your unique personality.</p><br>
+            <button class="btn-ios" onclick="openModal('portraits')">View Packages</button>
+        </div>
+
+        <div class="card" data-aos="fade-up" data-aos-delay="200">
+            <div class="icon-box"><i data-lucide="package"></i></div>
+            <h3>Products</h3>
+            <p>High-end commercial visuals to elevate your business brand.</p><br>
+            <button class="btn-ios" onclick="openModal('products')">View Packages</button>
+        </div>
+    </section>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()" style="position: relative; overflow: hidden;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 id="modalTitle" style="font-size: 1.5rem;">Packages</h2>
+                <i data-lucide="x" style="cursor: pointer; opacity: 0.6;" onclick="closeModal()"></i>
+            </div>
+            <div class="package-list" id="packageList"></div>
+            <a href="https://wa.me/94705555812" target="_blank" style="text-decoration: none;">
+                <button class="btn-ios" style="width: 100%; margin-top: 20px; background: var(--accent);">Book via WhatsApp</button>
+            </a>
+            <div class="detail-popup" id="detailPopup">
+                <h3 id="detailTitle" style="margin-bottom: 10px;">Package Details</h3>
+                <p id="detailText" style="color: rgba(255,255,255,0.7); line-height: 1.6; font-size: 0.9rem;"></p>
+                <button class="btn-ios" style="margin-top: 25px; width: 100%; background: #444; color: white;" onclick="closeDetail()">Back</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://unpkg.com/typewriter-effect@latest/dist/core.js"></script>
+    
+    <script>
+        lucide.createIcons();
+        AOS.init({ duration: 1000, once: true });
+
+        function toggleMenu() { document.getElementById('navIsland').classList.toggle('active'); }
+
+        new Typewriter('#type-h1', { autoStart: true, cursor: '', delay: 70 })
+            .typeString('Our Expertise').callFunction(() => {
+                document.getElementById('roll-p').classList.add('visible');
+            }).start();
+
+        const packageData = {
+            events: { title: "Event Packages", items: [
+                { name: "Mini Event", price: "Rs. 15,000", detail: "2 Hours coverage, 50 Edited Photos, Digital Delivery." }, 
+                { name: "Standard", price: "Rs. 28,000", detail: "5 Hours coverage, 100 Edited Photos, 1 Mini Album." },
+                { name: "Premium", price: "Rs. 45,000", detail: "Full day coverage, Unlimited Photos, Large Photobook." }] },
+            portraits: { title: "Portrait Sessions", items: [
+                { name: "Basic", price: "Rs. 12,000", detail: "45 min session • 12 professionally edited photos • 1 location" }, 
+                { name: "Signature", isPopular: true, price: "Rs. 15,000", detail: "1.5 hour session • 20 professionally edited photos • 1–2 locations" },
+                { name: "Elite", price: "Rs. 20,000", detail: "3 hour session • 30 professionally edited photos • multiple locations" }] },
+            products: { title: "Product Shoots", items: [
+                { name: "Starter", price: "Rs. 10,000", detail: "5 Products, White background, High-res export." }, 
+                { name: "Lifestyle", price: "Rs. 25,000", detail: "10 Products, Lifestyle staging, Social media ready." },
+                { name: "Brand Pro", price: "Rs. 48,000", detail: "Full catalog shoot, Video snippets, Commercial rights." }] }
+        };
+        
+        function openModal(type) {
+            const data = packageData[type];
+            document.getElementById('modalTitle').innerText = data.title;
+            document.getElementById('packageList').innerHTML = data.items.map((item, i) => `
+                <div class="package-item" style="transition-delay: ${i * 0.1}s">
+                    <div class="package-info">
+                        <h4 style="display: flex; align-items: center; gap: 8px; white-space: nowrap;">
+                            ${item.name} ${item.isPopular ? '<span style="font-size: 10px; color: #888;">(MOST POPULAR)</span>' : ''}
+                        </h4>
+                        <span>${item.price}</span>
+                    </div>
+                    <button class="btn-ios secondary" onclick="showDetail('${item.name}', '${item.detail}')">Details</button>
+                </div>`).join('');
+            document.getElementById('modalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+        }
+
+        function showDetail(name, text) {
+            document.getElementById('detailTitle').innerText = name;
+            document.getElementById('detailText').innerText = text;
+            document.getElementById('detailPopup').classList.add('active');
+        }
+
+        function closeDetail() { document.getElementById('detailPopup').classList.remove('active'); }
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.getElementById('detailPopup').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+    </script>
+</body>
+</html>
