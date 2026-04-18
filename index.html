@@ -1,87 +1,403 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TwoLens Photography</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<script src="main.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TwoLens Photography</title>
+    <link rel="icon" type="image/png" href="profiles/logo.png">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        :root {
+            --bg-dark: #020202;
+            --accent: #f4b400; /* TwoLens Gold */
+            --glass-bg: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-blur: blur(25px) saturate(180%);
+            --ios-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            --ios-spring: cubic-bezier(0.23, 1, 0.32, 1);
+            --ios-heavy-spring: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            letter-spacing: -0.02em;
+        }
+
+        /* --- LIQUID BACKGROUND --- */
+        .liquid-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: #000;
+        }
+
+        .blob {
+            position: absolute;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(244, 180, 0, 0.08) 0%, transparent 60%);
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: move 20s infinite alternate ease-in-out;
+        }
+
+        @keyframes move {
+            from { transform: translate(-20%, -20%); }
+            to { transform: translate(30%, 30%); }
+        }
+
+        /* --- iOS FLOATING NAV --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            position: fixed;
+            width: 90%;
+            top: 25px;
+            left: 5%;
+            z-index: 1000;
+            background: rgba(15, 15, 15, 0.5);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            box-shadow: var(--ios-shadow);
+        }
+
+        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; z-index: 1002; }
+        .logo span { color: var(--accent); }
+
+        .nav-links { display: flex; list-style: none; gap: 2rem; }
+        .nav-links a { 
+            color: rgba(255, 255, 255, 0.6); 
+            text-decoration: none; 
+            font-size: 0.9rem; 
+            font-weight: 500; 
+            transition: all 0.5s var(--ios-spring); 
+        }
+
+        .nav-links a:hover { color: var(--accent); transform: scale(1.05); }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                        url("https://res.cloudinary.com/dtetdrnjy/image/upload/v1776445275/1_pscfy1.jpg") center/cover no-repeat;
+            filter: blur(3px); 
+            transform: scale(1.1); 
+            z-index: -1; 
+        }
+
+        .hero-content { position: relative; z-index: 2; padding: 0 20px; }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            min-height: 1.2em;
+        }
+
+        .btn-ios {
+            display: inline-block;
+            padding: 18px 48px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.5s var(--ios-spring);
+        }
+
+        .btn-ios:hover { 
+            background: #ffffff;
+            color: #000;
+            transform: scale(1.05); 
+            box-shadow: 0 20px 40px rgba(244, 180, 0, 0.4);
+        }
+
+        /* --- GLASS SECTION --- */
+        .glass-section {
+            max-width: 1000px;
+            margin: -80px auto 100px;
+            padding: 80px 40px;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 44px;
+            text-align: center;
+            position: relative;
+            z-index: 5;
+            box-shadow: var(--ios-shadow);
+        }
+
+        .counters {
+            display: flex;
+            justify-content: center;
+            gap: 80px;
+            padding: 100px 10% 50px;
+            flex-wrap: wrap;
+        }
+
+        .counter .number { 
+            font-size: 4rem; 
+            font-weight: 800; 
+            color: var(--accent);
+        }
+
+        /* --- NEW FIXED FOOTER STYLES --- */
+        footer { 
+            padding: 120px 0 60px; 
+            text-align: center; 
+            border-top: 1px solid rgba(255,255,255,0.05); 
+        }
+
+        .footer-logo { 
+            font-family: 'Syncopate', sans-serif; 
+            font-size: clamp(2.5rem, 10vw, 4rem); 
+            opacity: 0.05; 
+            margin-bottom: 20px; 
+            color: #fff;
+            letter-spacing: 5px;
+        }
+
+        .footer-sub {
+            color: rgba(255,255,255,0.4); 
+            font-size: 0.7rem; 
+            letter-spacing: 10px; 
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        /* --- iOS MOBILE VIEW OVERRIDE --- */
+        .menu-toggle { display: none; cursor: pointer; z-index: 1002; padding: 10px; }
+
+        @media (max-width: 768px) {
+            nav { width: 92%; left: 4%; top: 15px; padding: 0.7rem 1.2rem; }
+            .menu-toggle { display: block; -webkit-tap-highlight-color: transparent; }
+            
+            .nav-links {
+                position: absolute;
+                top: 75px;
+                right: 0;
+                width: 220px;
+                background: rgba(25, 25, 27, 0.9); /* iOS Dark Mode Gray */
+                backdrop-filter: blur(30px) saturate(200%);
+                -webkit-backdrop-filter: blur(30px) saturate(200%);
+                border: 0.5px solid rgba(255,255,255,0.15);
+                border-radius: 22px;
+                flex-direction: column;
+                gap: 0;
+                padding: 6px;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+                transform: scale(0.5) translateY(-30px);
+                transform-origin: top right;
+                opacity: 0;
+                pointer-events: none;
+                transition: all 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+            }
+
+            .nav-links.active {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            .nav-links li { width: 100%; border-bottom: 0.5px solid rgba(255,255,255,0.08); }
+            .nav-links li:last-child { border-bottom: none; }
+
+            .nav-links a { 
+                display: block;
+                padding: 14px 18px;
+                font-size: 1rem; 
+                color: #fff; 
+                font-weight: 400;
+                text-align: left;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            .nav-links a:active { background: rgba(255,255,255,0.1); border-radius: 12px; }
+
+            .hero h1 { font-size: 2.8rem; letter-spacing: -0.05em; }
+            .glass-section { margin: -40px 15px 60px; padding: 40px 20px; border-radius: 28px; }
+            .counter .number { font-size: 2.8rem; }
+        }
+    </style>
 </head>
 <body>
 
-<nav class="nav">
-    <div class="logo">TwoLens</div>
-    <ul class="nav-links">
-        <li><a href="new.html">Home</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="Works/works.html">Portfolio</a></li>
-        <li><a href="services.html">Services</a></li>
-        <li><a href="contact.html">Contact</a></li>
-    </ul>
-</nav>
-<nav class="nav">
-    <div class="logo">YOURLOGO</div>
-
-    <ul class="nav-links" id="navLinks">
-        <li><a href="#home">Home</a></li>
-        <li><a href="#portfolio">Portfolio</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#contact">Contact</a></li>
-    </ul>
-
-    <!-- Hamburger -->
-    <div class="menu-btn" id="menuBtn">
-        <span></span>
-        <span></span>
-        <span></span>
+    <div class="liquid-container">
+        <div class="blob"></div>
     </div>
-</nav>
 
-<header class="hero">
-    <div class="hero-text">
-        <h1>Capturing Life’s Moments</h1>
-        <p>Two photographers, one passion.</p>
-        <a href="Works/works.html" class="btn">View Our Work</a>
-    </div>
-</header>
+    <nav>
+        <div class="logo">Two<span>Lens</span></div>
+        <div class="menu-toggle" id="mobile-menu-btn">
+            <i data-lucide="menu" id="menu-icon"></i>
+        </div>
+        <ul class="nav-links" id="nav-list">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="Works/works.html">Works</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="review.html">Reviews</a></li>
+        </ul>
+    </nav>
 
-<section class="home-intro">
-    <h2>Welcome to TwoLens Photography</h2>
-    <p>We specialize in weddings, portraits, events, and lifestyle photography. Every click tells a story.</p>
-</section>
+    <header class="hero">
+        <div class="hero-content">
+            <h1 id="typewriter-h1"></h1>
+            <br>
+            <p id="hero-p" style="opacity:0; transform: translateY(20px); transition: 1s ease 0.25s;">Two photographers, one passion for storytelling.</p><br>
+            <a href="Works/works.html" class="btn-ios" id="hero-btn" style="opacity:0; transition: 0.5s ease 0.5s;">View Portfolio</a>
+        </div>
+    </header>
 
-<section class="counters">
-    <div class="counter">
-        <h3 class="number" data-target="250">100</h3>
-        <p>Projects Done</p>
-    </div>
-    <div class="counter">
-        <h3 class="number" data-target="150">0</h3>
-        <p>Satisfied Clients</p>
-    </div>
-    <div class="counter">
-        <h3 class="number" data-target="5">0</h3>
-        <p>Awards Won</p>
-    </div>
-</section>
+    <section class="glass-section" data-aos="fade-up">
+        <h2>Welcome to TwoLens</h2>
+        <p style="color: rgba(255,255,255,0.7); line-height: 1.8; margin-top: 15px;">
+            Specializing in weddings and lifestyle photography. We frame emotions in a clean, modern style.
+        </p>
+    </section>
 
-<footer>
-    &copy; 2025 TwoLens Photography. All rights reserved.
-</footer>
+    <section id="counter-trigger">
+        <div class="counters">
+            <div class="counter" data-aos="fade-up">
+                <div class="number" data-target="3">0</div>
+                <p style="text-transform: uppercase; font-size: 0.7rem; letter-spacing: 2px; margin-top: 10px; opacity: 0.6;">Projects Done</p>
+            </div>
+            <div class="counter" data-aos="fade-up" data-aos-delay="100">
+                <div class="number" data-target="3">0</div>
+                <p style="text-transform: uppercase; font-size: 0.7rem; letter-spacing: 2px; margin-top: 10px; opacity: 0.6;">Satisfied Clients</p>
+            </div>
+        </div>
+    </section>
 
-<script src="js/main.js"></script>
+    <footer>
+        <div class="footer-logo">TWOLENS</div>
+        <p class="footer-sub">EST. 2026 • SRI LANKA</p>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://unpkg.com/typewriter-effect@latest/dist/core.js"></script>
+
     <script>
-const menuBtn = document.getElementById("menuBtn");
-const navLinks = document.getElementById("navLinks");
+    lucide.createIcons();
 
-menuBtn.addEventListener("click", () => {
-    menuBtn.classList.toggle("active");
-    navLinks.classList.toggle("active");
-});
-</script>
+    // Menu Toggle Logic - FIXED
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const navLinks = document.getElementById('nav-list');
+    const menuIcon = document.getElementById('menu-icon');
 
+    function updateMenuIcon(isOpen) {
+        menuIcon.setAttribute('data-lucide', isOpen ? 'x' : 'menu');
+        lucide.createIcons();
+    }
+
+    menuBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); 
+        const isCurrentlyOpen = navLinks.classList.contains('active');
+        
+        if (isCurrentlyOpen) {
+            navLinks.classList.remove('active');
+            updateMenuIcon(false); // 3 lines icon
+        } else {
+            navLinks.classList.add('active');
+            updateMenuIcon(true); // X icon
+        }
+    });
+
+    // Outside click to close
+    document.addEventListener('click', (e) => {
+        if (navLinks.classList.contains('active') && 
+            !navLinks.contains(e.target) && 
+            !menuBtn.contains(e.target)) {
+            navLinks.classList.remove('active');
+            updateMenuIcon(false); // 3 lines icon
+        }
+    });
+
+    // Menu links auto close
+    navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            navLinks.classList.remove('active');
+            updateMenuIcon(false); // 3 lines icon
+        });
+    });
+
+    AOS.init({ duration: 1200, easing: 'ease-out-quint', once: true });
+
+    new Typewriter('#typewriter-h1', {
+        autoStart: true,
+        cursor: '|',
+        delay: 80,
+        wrapperClassName: 'ios-typewriter',
+    })
+    .typeString('Capturing Life\'s<br>')
+    .pauseFor(500)
+    .typeString('<span style="color:#f4b400; font-weight: 1000;">Timeless Moments</span>')
+    .callFunction(() => {
+        const heroElements = ['hero-p', 'hero-btn'];
+        heroElements.forEach((id, index) => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.style.transition = `all 1s cubic-bezier(0.23, 1, 0.32, 1) ${index * 0.2}s`;
+                el.style.opacity = "1";
+                el.style.transform = "translateY(0)";
+            }
+        });
+    })
+    .start();
+
+    // Counter Animation
+    const counters = document.querySelectorAll('.number');
+    const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if(entry.isIntersecting) {
+                const target = +entry.target.getAttribute('data-target');
+                let start = null;
+                const duration = 2000;
+                const step = (timestamp) => {
+                    if (!start) start = timestamp;
+                    const progress = Math.min((timestamp - start) / duration, 1);
+                    const easeOut = 1 - Math.pow(1 - progress, 3); 
+                    entry.target.innerText = Math.floor(easeOut * target);
+                    if (progress < 1) window.requestAnimationFrame(step);
+                    else entry.target.innerText = target;
+                };
+                window.requestAnimationFrame(step);
+                counterObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.5 });
+    counters.forEach(c => counterObserver.observe(c));
+    </script>
 </body>
 </html>
-
-
