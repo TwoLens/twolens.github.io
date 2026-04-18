@@ -285,15 +285,16 @@
         </div>
 
         <div class="contact-card" data-aos="fade-left">
-            <form id="contactForm">
+            <form id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+                <input type="hidden" name="access_key" value="2b8e8b27-4cc5-4264-baa6-74ce44cbdcba">
                 <div class="input-group">
-                    <input type="text" placeholder="Full Name" required>
+                    <input type="text" name="name" placeholder="Full Name" required>
                 </div>
                 <div class="input-group">
-                    <input type="email" placeholder="Email Address" required>
+                    <input type="email" name="email" placeholder="Email Address" required>
                 </div>
                 <div class="input-group">
-                    <textarea placeholder="Tell us about your event/session..." required rows="5"></textarea>
+                    <textarea name="message" placeholder="Tell us about your event/session..." required rows="5"></textarea>
                 </div>
                 <button type="submit" class="submit-btn">
                     <span>Send Message</span>
@@ -339,12 +340,21 @@
             btn.style.pointerEvents = "none";
             btn.innerHTML = "<span>Processing...</span>";
             
-            setTimeout(() => {
+            // Web3Forms submission logic
+            const formData = new FormData(this);
+            fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                body: formData
+            }).then(() => {
                 alert('✨ Message sent successfully! We will contact you shortly.');
                 btn.innerHTML = originalText;
                 btn.style.pointerEvents = "all";
                 this.reset();
-            }, 1500);
+            }).catch(() => {
+                alert('Something went wrong, please try again.');
+                btn.innerHTML = originalText;
+                btn.style.pointerEvents = "all";
+            });
         });
     </script>
 </body>
