@@ -4,6 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TwoLens | Experience Review</title>
+    
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-analytics.js";
+      // Imported Firestore (Database) to save and read reviews
+      import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDwjAg4eNR9xTeg7bTyEJHw0Y6-IUVIFy8",
+        authDomain: "two-lens.firebaseapp.com",
+        projectId: "two-lens",
+        storageBucket: "two-lens.firebasestorage.app",
+        messagingSenderId: "286974637990",
+        appId: "1:286974637990:web:db2a2fd0e6c0f9f4ec4167",
+        measurementId: "G-4Y4P4S7DT6"
+      };
+
+      // Initialize Firebase & Firestore
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+      const db = getFirestore(app);
+
+      // 1. Function to save a review to Firebase
+      window.saveReviewToFirebase = async function(name, stars, text) {
+        try {
+          await addDoc(collection(db, "reviews"), {
+            name: name,
+            stars: parseInt(stars),
+            text: text,
+            timestamp: new Date()
+          });
+        } catch (e) {
+          console.error("Error adding review: ", e);
+        }
+      }
+
+      // 2. Automatically load reviews from Firebase in real-time
+      const q = query(collection(db, "reviews"), orderBy("timestamp", "desc"));
+      onSnapshot(q, (querySnapshot) => {
+        const grid = document.getElementById('reviewsGrid');
+        grid.innerHTML = ""; // Clear existing UI placeholders
+        
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const card = document.createElement('div');
+          card.className = 'review-card';
+          card.innerHTML = `
+              <div style="display:flex; align-items:center; gap:15px; margin-bottom:15px;">
+                  <div style="width:45px; height:45px; background:var(--brand-gold); border-radius:14px; display:flex; align-items:center; justify-content:center; color:#000; font-weight:800;">
+                      ${data.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                      <h4 style="font-size:1.1rem;">${data.name}</h4>
+                      <div style="color:var(--brand-gold);">${'★'.repeat(data.stars)}</div>
+                  </div>
+              </div>
+              <p style="color:rgba(255,255,255,0.8); line-height:1.6;">${data.text}</p>
+          `;
+          grid.appendChild(card);
+        });
+      });
+    </script>
+
     <style>
         :root {
             --brand-gold: #FFB800;
@@ -266,7 +329,7 @@
             <ul class="nav-links" id="navLinks">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="about.html">About</a></li>
-                <li><a href="Works/works.html">Portfolio</a></li>
+                <li><a href="Works/works.html">Works</a></li>
                 <li><a href="services.html">Services</a></li>
                 <li><a href="contact.html">Contact</a></li>
                 <li><a href="review.html">Reviews</a></li>
@@ -304,7 +367,7 @@
                     </div>
                     <h2 style="font-size: 2.2rem; font-weight: 800;">Posted!</h2>
                     <p style="color: rgba(255,255,255,0.4); margin-top: 10px;">Your review is now live on the wall.</p>
-                    <button class="done-btn" onclick="location.reload()">Done</button>
+                    <button class="done-btn" onclick="resetFormAfterPosting()">Done</button>
                 </div>
             </div>
         </main>
@@ -322,10 +385,8 @@
 
         menuToggle.onclick = () => {
             navLinks.classList.toggle('show');
-            // Animate hamburger to X if you want, but strictly kept simple per original design
         };
 
-        // Close menu when clicking a link
         navLinks.onclick = () => {
             navLinks.classList.remove('show');
         };
@@ -378,28 +439,29 @@
         function publishReview() {
             const text = document.getElementById('reviewText').value || "Incredible experience!";
             const stars = document.querySelector('input[name="r"]:checked')?.value || 5;
-            const grid = document.getElementById('reviewsGrid');
-            const card = document.createElement('div');
-            card.className = 'review-card';
-            card.innerHTML = `
-                <div style="display:flex; align-items:center; gap:15px; margin-bottom:15px;">
-                    <div style="width:45px; height:45px; background:var(--brand-gold); border-radius:14px; display:flex; align-items:center; justify-content:center; color:#000; font-weight:800;">
-                        ${userData.name.charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                        <h4 style="font-size:1.1rem;">${userData.name}</h4>
-                        <div style="color:var(--brand-gold);">${'★'.repeat(stars)}</div>
-                    </div>
-                </div>
-                <p style="color:rgba(255,255,255,0.8); line-height:1.6;">${text}</p>
-            `;
-            grid.prepend(card);
+            
+            // Sends data smoothly to your database function inside the Firebase module script
+            if(window.saveReviewToFirebase) {
+                window.saveReviewToFirebase(userData.name, stars, text);
+            }
             
             document.getElementById('form-ui').style.opacity = "0";
             setTimeout(() => {
                 document.getElementById('form-ui').style.display = "none";
                 document.getElementById('success').style.display = "flex";
             }, 400);
+        }
+
+        // Resets the card container view without refreshing the whole window and losing data
+        function resetFormAfterPosting() {
+            document.getElementById('reviewText').value = "";
+            const checkedRadio = document.querySelector('input[name="r"]:checked');
+            if (checkedRadio) checkedRadio.checked = false;
+            thumb.style.transform = "translateX(0)";
+            
+            document.getElementById('success').style.display = "none";
+            document.getElementById('form-ui').style.display = "block";
+            document.getElementById('form-ui').style.opacity = "1";
         }
     </script>
 </body>
